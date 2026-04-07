@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+  .historyItem{
+    margin-bottom:20px;
+    padding-bottom:15px;
+    border-bottom:1px solid var(--line);
+  }
+</style>
+
+<div class="card">
+  <h3>My Scan History</h3>
+
+  {% if not rows %}
+    <p>No history found.</p>
+  {% else %}
+
+    {% for row in rows %}
+      {% set s = (row.score or 0)|int %}
+      {% if s >= 6 %}
+        {% set risk="HIGH" %}
+        {% set barClass="risk-high" %}
+      {% elif s >= 2 %}
+        {% set risk="MEDIUM" %}
+        {% set barClass="risk-medium" %}
+      {% else %}
+        {% set risk="LOW" %}
+        {% set barClass="risk-low" %}
+      {% endif %}
+
+      {% set capped = s if s <= 10 else 10 %}
+      {% set widthClass = "w-" ~ (capped*10) %}
+
+      <div class="historyItem">
+        <div>
+          <span class="pill">{{ row.timestamp }}</span>
+
+          {% if row.result == "LEGIT" %}
+            <span class="badge badge-legit">LEGIT</span>
+          {% elif row.result == "SUSPICIOUS" %}
+            <span class="badge badge-susp">SUSPICIOUS</span>
+          {% else %}
+            <span class="badge badge-phish">PHISHING</span>
+          {% endif %}
+
+          <span class="pill">Score: {{ s }}</span>
+          <span class="pill">Risk: {{ risk }}</span>
+        </div>
+
+        <div class="riskBar" style="margin-top:8px;">
+          <div class="riskFill {{ barClass }} {{ widthClass }}"></div>
+        </div>
+
+        {% if row.reasons %}
+          <div style="margin-top:8px;">
+            <b>Indicators:</b>
+            <ul>
+              {% for r in row.reasons %}
+                <li>{{ r }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+      </div>
+
+    {% endfor %}
+  {% endif %}
+</div>
+
+{% endblock %}

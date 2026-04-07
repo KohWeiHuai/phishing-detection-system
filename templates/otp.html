@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <h3>OTP Verification</h3>
+  <p class="pill">Enter the 6-digit code from your Authenticator app.</p>
+
+  <form method="POST">
+    <label>OTP Code</label>
+    <input name="otp_code" placeholder="123456" maxlength="6" required>
+    <div class="row" style="margin-top:12px;">
+      <button type="submit">Verify</button>
+      <a class="btnlink" href="{{ url_for('login') }}">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

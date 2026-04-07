@@ -1,0 +1,355 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Secure Phishing Detection System</title>
+  <style>
+    :root{
+      --bg:#0b1220;
+      --card:#111b2e;
+      --card2:#0f172a;
+      --text:#e5e7eb;
+      --muted:#a7b0c0;
+      --line:#22314f;
+      --accent:#3b82f6;
+      --accent2:#22c55e;
+      --danger:#ef4444;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans";
+      color: var(--text);
+      background:
+        radial-gradient(900px 500px at 20% 0%, rgba(59,130,246,.25), transparent 55%),
+        radial-gradient(900px 500px at 80% 0%, rgba(34,197,94,.18), transparent 55%),
+        var(--bg);
+      min-height: 100vh;
+    }
+
+    .wrap{
+      max-width: 980px;
+      margin: 38px auto;
+      padding: 0 18px;
+    }
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .brand{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+    }
+    .brand h1{
+      font-size: 26px;
+      margin:0;
+      letter-spacing: .2px;
+    }
+    .brand p{
+      margin:0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .nav{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap: wrap;
+      justify-content:flex-end;
+    }
+
+    .chip{
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    a.btnlink{
+      text-decoration:none;
+      color: var(--text);
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      padding: 9px 12px;
+      border-radius: 12px;
+      font-size: 14px;
+      transition: .15s ease;
+      display: inline-block;
+    }
+    a.btnlink:hover{
+      border-color: rgba(59,130,246,.6);
+      transform: translateY(-1px);
+    }
+    /* Prevent purple visited links */
+    a.btnlink:visited{
+      color: var(--text);
+    }
+
+    /* Optional: highlight current page */
+    a.btnlink.active{
+      border-color: rgba(59,130,246,.8);
+      box-shadow: 0 0 0 3px rgba(59,130,246,.12);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .card h3{
+      margin: 0 0 12px 0;
+      font-size: 18px;
+    }
+
+    label{
+      display:block;
+      margin-top: 10px;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    input, select, textarea{
+      width: 100%;
+      border: 1px solid var(--line);
+      background: rgba(15, 23, 42, .6);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      outline: none;
+      font-size: 14px;
+    }
+
+    textarea{
+      min-height: 220px;
+      resize: vertical;
+      line-height: 1.45;
+    }
+
+    input:focus, select:focus, textarea:focus{
+      border-color: rgba(59,130,246,.7);
+      box-shadow: 0 0 0 3px rgba(59,130,246,.18);
+    }
+
+    .row{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    button{
+      border: 0;
+      background: var(--accent);
+      color: white;
+      padding: 10px 14px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight: 600;
+      transition: .15s ease;
+    }
+    button:hover{ transform: translateY(-1px); opacity: .95; }
+
+    .btn-secondary{
+      background: rgba(255,255,255,.06);
+      border: 1px solid var(--line);
+      color: var(--text);
+    }
+
+    .pill{
+      display:inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .msg{
+      padding: 10px 12px;
+      border-radius: 12px;
+      border:1px solid var(--line);
+      margin: 10px 0 0 0;
+      font-size: 14px;
+    }
+    .success{ background: rgba(34,197,94,.12); border-color: rgba(34,197,94,.35); }
+    .danger{ background: rgba(239,68,68,.12); border-color: rgba(239,68,68,.35); }
+    .info{ background: rgba(59,130,246,.12); border-color: rgba(59,130,246,.35); }
+
+    .resultBox{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin-top: 10px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+    }
+
+    .badge{
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .3px;
+    }
+    .badge-legit{ background: rgba(34,197,94,.18); border: 1px solid rgba(34,197,94,.35); }
+    .badge-susp{ background: rgba(59,130,246,.18); border: 1px solid rgba(59,130,246,.35); }
+    .badge-phish{ background: rgba(239,68,68,.18); border: 1px solid rgba(239,68,68,.35); }
+
+    code{
+      display:block;
+      white-space: pre-wrap;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(15,23,42,.65);
+      color: #d1d5db;
+      font-size: 13px;
+      overflow-x:auto;
+    }
+
+    ul{ margin: 8px 0 0 18px; color: #d1d5db; }
+    li{ margin: 6px 0; }
+
+    footer{
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align:center;
+      opacity: .9;
+    }
+
+    /* ---- Risk Bar UI ---- */
+.riskWrap{
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.02);
+}
+
+.riskHeader{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+  margin-bottom: 10px;
+}
+
+.riskBar{
+  position: relative;
+  height: 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  overflow: hidden;
+  background: rgba(255,255,255,.04);
+}
+
+.riskFill{
+  height: 100%;
+  width: 33%;
+}
+
+.risk-low{ width: 33%; background: rgba(34,197,94,.85); }
+.risk-medium{ width: 66%; background: rgba(59,130,246,.85); }
+.risk-high{ width: 100%; background: rgba(239,68,68,.85); }
+
+.riskLabels{
+  display:flex;
+  justify-content:space-between;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.historyItem{
+  margin-top: 14px;
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.02);
+}
+
+.historyTop{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <div class="topbar">
+      <div class="brand">
+        <h1>Secure Phishing Detection System</h1>
+        <p>Rule-based, explainable phishing detection with secure login & audit logging.</p>
+      </div>
+
+      <div class="nav">
+  {% if session.get("username") %}
+    <span class="chip">{{ session.get("username") }} ({{ session.get("role") }})</span>
+
+    <a class="btnlink {% if request.path == url_for('dashboard') %}active{% endif %}" href="{{ url_for('dashboard') }}">Dashboard</a>
+    <a class="btnlink {% if request.path == url_for('history') %}active{% endif %}" href="{{ url_for('history') }}">History</a>
+    <a class="btnlink {% if request.path == url_for('about') %}active{% endif %}" href="{{ url_for('about') }}">About</a>
+
+    <!-- ✅ ADD HERE -->
+    <a class="btnlink {% if request.path == url_for('security_settings') %}active{% endif %}"
+       href="{{ url_for('security_settings') }}">Security</a>
+
+    {% if session.get("role") == "admin" %}
+      <a class="btnlink {% if request.path == url_for('admin') %}active{% endif %}" href="{{ url_for('admin') }}">Admin</a>
+    {% endif %}
+
+    <a class="btnlink" href="{{ url_for('logout') }}">Logout</a>
+  {% else %}
+    <a class="btnlink {% if request.path == url_for('about') %}active{% endif %}" href="{{ url_for('about') }}">About</a>
+    <a class="btnlink {% if request.path == url_for('login') %}active{% endif %}" href="{{ url_for('login') }}">Login</a>
+    <a class="btnlink {% if request.path == url_for('register') %}active{% endif %}" href="{{ url_for('register') }}">Register</a>
+  {% endif %}
+</div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="msg {{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="grid">
+      {% block content %}{% endblock %}
+    </div>
+
+    <footer>
+      Academic prototype — no real inbox integration. Logs stored locally for evaluation evidence.
+    </footer>
+  </div>
+</body>
+</html>

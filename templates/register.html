@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <h3>Register</h3>
+  <form method="post">
+    <label>Username</label>
+    <input name="username" required>
+    <label style="margin-top:10px;">Password</label>
+    <input name="password" type="password" required>
+    <label style="margin-top:10px;">Role</label>
+    <select name="role">
+      <option value="user" selected>user</option>
+      <option value="admin">admin</option>
+    </select>
+    <button type="submit">Create account</button>
+  </form>
+  <p style="margin-top:10px; font-size: 13px;">
+    Password must be at least 8 characters and include uppercase, lowercase, and a number.
+  </p>
+</div>
+{% endblock %}

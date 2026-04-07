@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+  .tableWrap{ overflow-x:auto; }
+
+  table{
+    width:100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  th, td{
+    text-align:left;
+    padding: 10px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+
+  th{
+    color: var(--muted);
+    font-weight: 700;
+  }
+
+  tr:hover td{
+    background: rgba(255,255,255,.02);
+  }
+
+  .riskMini{
+    width: 160px;
+    height: 10px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: rgba(255,255,255,0.03);
+    overflow: hidden;
+  }
+
+  .riskFill{
+    height:100%;
+    border-radius: 999px;
+  }
+
+  .risk-low{ background: rgba(34,197,94,0.65); }
+  .risk-medium{ background: rgba(59,130,246,0.65); }
+  .risk-high{ background: rgba(239,68,68,0.65); }
+
+  /* Width Classes (avoid inline style = no red error) */
+  .w-0{width:0%;}
+  .w-10{width:10%;}
+  .w-20{width:20%;}
+  .w-30{width:30%;}
+  .w-40{width:40%;}
+  .w-50{width:50%;}
+  .w-60{width:60%;}
+  .w-70{width:70%;}
+  .w-80{width:80%;}
+  .w-90{width:90%;}
+  .w-100{width:100%;}
+
+  details summary{
+    cursor:pointer;
+  }
+
+  .muted{ color: var(--muted); }
+  .small{ font-size:12px; }
+</style>
+
+<div class="card">
+  <h3>Admin: Latest Results</h3>
+
+  {% if not results %}
+    <p>No results found.</p>
+  {% else %}
+
+  <div class="tableWrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:170px;">Time</th>
+          <th style="width:120px;">User</th>
+          <th style="width:120px;">Label</th>
+          <th style="width:80px;">Score</th>
+          <th style="width:200px;">Risk</th>
+          <th>Explainable Reasons</th>
+        </tr>
+      </thead>
+      <tbody>
+
+      {% for r in results %}
+        {% set s = (r.score or 0)|int %}
+
+        {% if s >= 6 %}
+          {% set barClass = "risk-high" %}
+          {% set riskText = "HIGH" %}
+        {% elif s >= 2 %}
+          {% set barClass = "risk-medium" %}
+          {% set riskText = "MEDIUM" %}
+        {% else %}
+          {% set barClass = "risk-low" %}
+          {% set riskText = "LOW" %}
+        {% endif %}
+
+        {% set capped = s if s <= 10 else 10 %}
+        {% set pct = capped * 10 %}
+        {% set widthClass = "w-" ~ pct %}
+
+        <tr>
+          <td class="muted">{{ r.timestamp }}</td>
+          <td>{{ r.user }}</td>
+
+          <td>
+            {% if r.result == "LEGIT" %}
+              <span class="badge badge-legit">LEGIT</span>
+            {% elif r.result == "SUSPICIOUS" %}
+              <span class="badge badge-susp">SUSPICIOUS</span>
+            {% else %}
+              <span class="badge badge-phish">PHISHING</span>
+            {% endif %}
+          </td>
+
+          <td>
+            <span class="pill">{{ s }}</span>
+          </td>
+
+          <td>
+            <div class="small muted" style="margin-bottom:6px;">
+              {{ riskText }}
+            </div>
+            <div class="riskMini">
+              <div class="riskFill {{ barClass }} {{ widthClass }}"></div>
+            </div>
+          </td>
+
+          <td>
+            {% if r.reasons and (r.reasons|length > 0) %}
+              <details>
+                <summary>View reasons ({{ r.reasons|length }})</summary>
+                <ul class="small" style="margin-top:8px;">
+                  {% for reason in r.reasons %}
+                    <li>{{ reason }}</li>
+                  {% endfor %}
+                </ul>
+              </details>
+            {% else %}
+              <span class="muted">No reasons saved.</span>
+            {% endif %}
+          </td>
+        </tr>
+
+      {% endfor %}
+
+      </tbody>
+    </table>
+  </div>
+
+  {% endif %}
+</div>
+
+
+<div class="card">
+  <h3>Admin: Audit Log</h3>
+
+  {% if not logs %}
+    <p>No audit logs found.</p>
+  {% else %}
+    <div class="tableWrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Raw Log Entry</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for line in logs %}
+            <tr>
+              <td class="small muted">{{ line.strip() }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+</div>
+
+{% endblock %}

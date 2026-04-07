@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="card">
+  <h2>About This System</h2>
+  <p>
+    This project is a <b>Secure Phishing Detection System</b> designed as an academic prototype.
+    It demonstrates how phishing indicators can be detected using an <b>explainable, rule-based</b> approach,
+    supported by <b>secure authentication</b> and <b>audit logging</b>.
+  </p>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <h3>Rule-Based Detection</h3>
+    <p>
+      The detector analyses submitted email text and checks for common phishing indicators such as:
+    </p>
+    <ul>
+      <li>Urgency / threat language (e.g., “urgent”, “immediately”)</li>
+      <li>Credential requests (e.g., “verify account”, “password”, “sign in”)</li>
+      <li>Financial pressure terms (e.g., “payment”, “invoice”, “refund”)</li>
+      <li>Suspicious URLs (IP-based links, punycode, risky TLDs)</li>
+      <li>Attachment and macro-related tricks</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Explainable Results</h3>
+    <p>
+      Instead of returning only a label, the system provides:
+    </p>
+    <ul>
+      <li><b>Classification</b> (LEGIT / SUSPICIOUS / PHISHING)</li>
+      <li><b>Risk score</b> based on weighted rules</li>
+      <li><b>Triggered reasons</b> showing which indicators matched</li>
+    </ul>
+    <p>
+      This improves transparency and helps users understand <i>why</i> the content is suspicious.
+    </p>
+  </div>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <h3>Security Features</h3>
+    <ul>
+      <li><b>Secure login</b> with salted password hashing (PBKDF2)</li>
+      <li><b>Session-based access control</b> for authenticated features</li>
+      <li><b>Role-based access</b> (User vs Admin)</li>
+      <li><b>Audit logging</b> for login, logout, detection and admin access events</li>
+      <li><b>History storage</b> so users can review past detections</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Limitations</h3>
+    <ul>
+      <li>This prototype uses <b>mock email samples</b> (no real inbox integration).</li>
+      <li>Rule-based detection may produce <b>false positives</b> or miss new attack styles.</li>
+      <li>Future improvements can include <b>ML models</b> and <b>threat intelligence APIs</b>.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="card">
+  <h3>How to Use</h3>
+  <ol>
+    <li>Register an account and log in.</li>
+    <li>Paste email content into the dashboard and click <b>Detect</b>.</li>
+    <li>Review the classification, score, and explainable reasons.</li>
+    <li>Check <b>History</b> for past results. Admin users can review logs in the <b>Admin</b> panel.</li>
+  </ol>
+</div>
+
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <h3>Security Settings (OTP / 2FA)</h3>
+
+  {% if secret %}
+    <p class="pill">OTP is ENABLED ✅</p>
+    <p>Add this secret to Google Authenticator / Microsoft Authenticator:</p>
+    <code>{{ secret }}</code>
+
+    <form method="POST" style="margin-top:12px;">
+      <input type="hidden" name="action" value="disable">
+      <button class="btn-secondary" type="submit">Disable OTP</button>
+    </form>
+  {% else %}
+    <p class="pill">OTP is DISABLED</p>
+    <p>Enable OTP to add an extra layer of protection to your account.</p>
+
+    <form method="POST" style="margin-top:12px;">
+      <input type="hidden" name="action" value="enable">
+      <button type="submit">Enable OTP</button>
+    </form>
+  {% endif %}
+</div>
+{% endblock %}

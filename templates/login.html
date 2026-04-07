@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <h3>Login</h3>
+  <form method="post">
+    <label>Username</label>
+    <input name="username" required>
+
+    <label style="margin-top:10px;">Password</label>
+    <input name="password" type="password" required>
+
+    <label style="margin-top:10px;">Email (for OTP)</label>
+    <input name="email" type="email" required placeholder="example@gmail.com">
+
+    <button type="submit">Login</button>
+  </form>
+</div>
+{% endblock %}

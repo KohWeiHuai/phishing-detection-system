@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+  .riskWrap{ margin-top: 10px; }
+  .riskHeader{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:10px; }
+
+  .riskBar{
+    height: 16px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: rgba(255,255,255,0.03);
+    overflow: hidden;
+  }
+
+  .riskFill{ height:100%; border-radius:999px; }
+
+  .risk-low{ background: rgba(34,197,94,0.6); }
+  .risk-medium{ background: rgba(59,130,246,0.6); }
+  .risk-high{ background: rgba(239,68,68,0.6); }
+
+  /* Width Classes */
+  .w-0{width:0%;}
+  .w-10{width:10%;}
+  .w-20{width:20%;}
+  .w-30{width:30%;}
+  .w-40{width:40%;}
+  .w-50{width:50%;}
+  .w-60{width:60%;}
+  .w-70{width:70%;}
+  .w-80{width:80%;}
+  .w-90{width:90%;}
+  .w-100{width:100%;}
+
+  .riskLabels{
+    display:flex;
+    justify-content:space-between;
+    font-size:12px;
+    color:var(--muted);
+    margin-top:6px;
+  }
+</style>
+
+<div class="card">
+  <h3>Scan Email (Full Header + Body)</h3>
+  <form method="post">
+    <label>Paste full email including headers:</label>
+    <textarea name="email_text" placeholder="Example:
+
+Subject: Urgent Account Verification Required
+From: Bank Support <support@bank-security.xyz>
+Reply-To: helpdesk@gmail.com
+
+Dear customer,
+...">{{ email_text }}</textarea>
+    <button type="submit">Detect</button>
+  </form>
+</div>
+
+{% if result %}
+<div class="card">
+  <h3>Detection Result</h3>
+
+  {% set s = (score or 0)|int %}
+  {% if s >= 6 %}
+    {% set risk="HIGH" %}
+    {% set barClass="risk-high" %}
+  {% elif s >= 2 %}
+    {% set risk="MEDIUM" %}
+    {% set barClass="risk-medium" %}
+  {% else %}
+    {% set risk="LOW" %}
+    {% set barClass="risk-low" %}
+  {% endif %}
+
+  {% set capped = s if s <= 10 else 10 %}
+  {% set widthClass = "w-" ~ (capped*10) %}
+
+  <div class="riskWrap">
+    <div class="riskHeader">
+      <span class="pill">Risk: <b>{{ risk }}</b></span>
+      <span class="pill">Score: <b>{{ s }}</b></span>
+      <span class="pill">Triggers: <b>{{ reasons|length }}</b></span>
+    </div>
+
+    <div class="riskBar">
+      <div class="riskFill {{ barClass }} {{ widthClass }}"></div>
+    </div>
+
+    <div class="riskLabels">
+      <span>Low</span>
+      <span>Medium</span>
+      <span>High</span>
+    </div>
+  </div>
+
+  <div class="resultBox" style="margin-top:12px;">
+    {% if result == "LEGIT" %}
+      <span class="badge badge-legit">LEGIT</span>
+    {% elif result == "SUSPICIOUS" %}
+      <span class="badge badge-susp">SUSPICIOUS</span>
+    {% else %}
+      <span class="badge badge-phish">PHISHING</span>
+    {% endif %}
+  </div>
+
+  <p style="margin-top:12px;"><b>Explainable Indicators:</b></p>
+  <ul>
+    {% for r in reasons %}
+      <li>{{ r }}</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+
+{% endblock %}
